@@ -15,25 +15,34 @@ export const App = () => {
 
   const pendingOnlyFilter = { ...hideCompletedFilter, ...userFilter };
 
-  const tasks = useTracker(() => {
-    if(!user) {
-      return [];
+  const { tasks, pendingTaskCount, isLoading } = useTracker(() => {
+    const noDataAvailable = {
+      tasks: [],
+      pendingTaskCount: 0
+    };
+
+    if(!Meteor.user()) {
+      return noDataAvailable;
     }
 
-    return TasksCollection.find(hideCompleted ? pendingOnlyFilter : userFilter, 
-      { 
-        sort: { createdAt: -1 } 
+    const handler = Meteor.subscribe('tasks');
+
+    if(!handler.ready()) {
+      return {...noDataAvailable, isLoading: true};
+    }
+
+    const tasks = TasksCollection.find(
+      hideCompleted ? pendingOnlyFilter : userFilter, 
+      {
+        sort: { createdAt: -1 },
       }
     ).fetch();
+    const pendingTaskCount = TasksCollection.find(pendingOnlyFilter).count();
+
+    return {tasks, pendingTaskCount};
+
   });
 
-  const pendingTaskCount = useTracker(() => {
-    if(!user) {
-      return 0;
-    }
-
-    return TasksCollection.find(pendingOnlyFilter).count();
-  });
   const pendingTaskTitle = pendingTaskCount ? ` (${pendingTaskCount})` : ''; 
 
   const toggleChecked = ({ _id, isChecked }) => {
@@ -73,6 +82,7 @@ export const App = () => {
             </button>
           </div>
 
+          {isLoading && <div className="loading">Loading...</div>}
           <ul className='tasks'>
             { tasks.map(task => (
             <Task 
