@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "start": "meteor run --port 3005",
-    "test": "meteor test --once --driver-package meteortesting:mocha",
-    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "test": "meteor test --once --driver-package meteortesting:mocha --port 3009",
+    "test-app": "cross-env TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha --port 3009",
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
@@ -20,5 +20,9 @@
       "server": "server/main.js"
     },
     "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "cross-env": "^7.0.3"
   }
 }
