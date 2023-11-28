@@ -1,0 +1,9 @@
+{
+  "conf.settingsEditor.meteorToolbox": {
+    "port": "3000",
+    "additionalArgs": null,
+    "meteorPackageDirs": null,
+    "ignoreDirsOnIndexing": null,
+    "auto": false
+  }
+}
